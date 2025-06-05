@@ -1,5 +1,6 @@
 # VSCode 插件开发相关
 out/
+out
 dist/
 node_modules/
 .vscode-test/
@@ -58,7 +59,7 @@ coverage/
 *.swo
 *~
 # 可选：esbuild 缓存（如果使用）
-.esbuild 
+.esbuild
 .cursorrules
 bb/*
 node_modules/*

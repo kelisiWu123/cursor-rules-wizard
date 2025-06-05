@@ -1,0 +1,29 @@
+{
+  // ESLint 配置
+  "eslint.enable": true,
+  "eslint.validate": ["typescript"],
+  "eslint.codeAction.showDocumentation": {
+    "enable": true
+  },
+
+  // 保存时自动修复
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // TypeScript 配置
+  "typescript.preferences.quoteStyle": "single",
+  "typescript.suggest.autoImports": true,
+
+  // 编辑器配置
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+
+  // 文件关联
+  "files.associations": {
+    "*.cursorrules": "plaintext"
+  }
+}

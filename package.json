@@ -2,7 +2,7 @@
   "name": "miao-cursor-rules",
   "displayName": "喵: 中文 Cursor Rules",
   "description": "Cursor Rules Template Manager",
-  "version": "1.0.10",
+  "version": "1.1.0",
   "publisher": "kelisiWu",
   "author": "kelisiWu",
   "repository": {
@@ -41,8 +41,18 @@
         "category": "Cursor Rules"
       },
       {
+        "command": "cursor-rules.saveAsMdcTemplate",
+        "title": "保存为 MDC 模板",
+        "category": "Cursor Rules"
+      },
+      {
         "command": "cursor-rules.createFromTemplate",
         "title": "创建 Cursor Rules 模板文件",
+        "category": "Cursor Rules"
+      },
+      {
+        "command": "cursor-rules.createNewMdcTemplate",
+        "title": "创建新的 MDC 模板",
         "category": "Cursor Rules"
       },
       {
@@ -76,6 +86,12 @@
         "icon": "$(star)"
       },
       {
+        "command": "cursor-rules.deleteTemplate",
+        "title": "删除模板",
+        "category": "Cursor Rules",
+        "icon": "$(trash)"
+      },
+      {
         "command": "cursor-rules.manageTemplates",
         "title": "管理 Cursor Rules 模板",
         "category": "Cursor Rules"
@@ -89,14 +105,48 @@
           "group": "cursorRules"
         },
         {
+          "when": "resourceExtname == '.mdc' && resourceDirname =~ /\\.cursor[/\\\\]rules$/",
+          "command": "cursor-rules.saveAsMdcTemplate",
+          "group": "cursorRules"
+        },
+        {
           "when": "explorerResourceIsFolder",
           "command": "cursor-rules.createFromTemplate",
+          "group": "cursorRules"
+        },
+        {
+          "when": "explorerResourceIsFolder",
+          "command": "cursor-rules.createNewMdcTemplate",
           "group": "cursorRules"
         }
       ],
       "commandPalette": [
         {
           "command": "cursor-rules.toggleFavorite",
+          "when": "false"
+        },
+        {
+          "command": "cursor-rules.deleteTemplate",
+          "when": "false"
+        },
+        {
+          "command": "cursor-rules.saveAsTemplate",
+          "when": "false"
+        },
+        {
+          "command": "cursor-rules.saveAsMdcTemplate",
+          "when": "false"
+        },
+        {
+          "command": "cursor-rules.createFromTemplate",
+          "when": "false"
+        },
+        {
+          "command": "cursor-rules.createNewMdcTemplate",
+          "when": "false"
+        },
+        {
+          "command": "cursor-rules.editTemplate",
           "when": "false"
         }
       ],
@@ -116,6 +166,11 @@
         {
           "command": "cursor-rules.toggleFavorite",
           "when": "view == cursorRulesTemplates && viewItem != category",
+          "group": "inline"
+        },
+        {
+          "command": "cursor-rules.deleteTemplate",
+          "when": "view == cursorRulesTemplates && viewItem == userTemplate",
           "group": "inline"
         },
         {
@@ -203,15 +258,22 @@
     "compile": "tsc -p ./ && npm run copy-templates",
     "copy-templates": "mkdir -p out/templates/roles && cp -r src/templates/roles/*.json out/templates/roles/",
     "watch": "tsc -watch -p ./",
-    "lint": "eslint src --ext ts",
-    "build": "vsce package"
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write \"src/**/*.{ts,js,json,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,js,json,md}\"",
+    "lint:format": "npm run lint:fix && npm run format",
+    "build": "npx vsce package"
   },
   "devDependencies": {
-    "@types/node": "^16.x.x",
+    "@eslint/js": "^9.28.0",
+    "@types/node": "^22.15.29",
     "@types/vscode": "^1.60.0",
-    "@typescript-eslint/eslint-plugin": "^5.x.x",
-    "@typescript-eslint/parser": "^5.x.x",
-    "eslint": "^8.x.x",
-    "typescript": "^4.x.x"
+    "@typescript-eslint/eslint-plugin": "^8.33.1",
+    "@typescript-eslint/parser": "^8.33.1",
+    "eslint": "^9.28.0",
+    "eslint-config-prettier": "^10.1.5",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3"
   }
 }

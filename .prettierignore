@@ -1,0 +1,32 @@
+# 编译输出
+out/
+dist/
+build/
+
+# 依赖
+node_modules/
+
+# 测试
+.vscode-test/
+
+# 资源文件
+resources/
+
+# 日志
+*.log
+
+# 临时文件
+*.tmp
+*.temp
+
+# 配置文件
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# 类型声明文件
+*.d.ts
+
+# 其他
+.DS_Store
+Thumbs.db

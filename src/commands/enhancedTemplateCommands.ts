@@ -1,10 +1,12 @@
-import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as vscode from 'vscode';
 import { Template, TemplateLoader } from '../utils/templateLoader';
-import { createCursorRuleFile } from '../utils/fileUtils';
 import { TemplatePreviewPanel } from '../views/templatePreview';
-import { TemplateTreeItem, TemplateViewProvider } from '../views/templateViewProvider';
+import {
+  TemplateTreeItem,
+  TemplateViewProvider,
+} from '../views/templateViewProvider';
 
 /**
  * 注册增强的模板命令
@@ -27,7 +29,7 @@ export function registerEnhancedTemplateCommands(
         }
 
         const selected = await vscode.window.showQuickPick(
-          templates.map((template) => ({
+          templates.map(template => ({
             label: template.name,
             description: template.description,
             template: template,
@@ -38,7 +40,10 @@ export function registerEnhancedTemplateCommands(
         );
 
         if (selected) {
-          TemplatePreviewPanel.createOrShow(context.extensionUri, selected.template);
+          TemplatePreviewPanel.createOrShow(
+            context.extensionUri,
+            selected.template
+          );
         }
       } else {
         TemplatePreviewPanel.createOrShow(context.extensionUri, item.template);
@@ -49,10 +54,13 @@ export function registerEnhancedTemplateCommands(
   // 编辑模板命令
   const editTemplateDisposable = vscode.commands.registerCommand(
     'cursor-rules.editTemplate',
-    async (item: TemplateTreeItem) => {
+    async (item?: TemplateTreeItem | vscode.Uri) => {
       try {
-        if (!item || !item.template) {
-          vscode.window.showErrorMessage('请在模板上右键选择此命令');
+        // 只处理从模板树视图调用的情况
+        if (!item || !('template' in item) || !item.template) {
+          vscode.window.showErrorMessage(
+            '请在模板树视图中选择用户模板进行编辑'
+          );
           return;
         }
 
@@ -63,11 +71,25 @@ export function registerEnhancedTemplateCommands(
         }
 
         // 获取模板文件路径
-        const templateDir = path.join(context.globalStorageUri.fsPath, 'templates');
-        const templatePath = path.join(
-          templateDir,
-          `${item.template.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.json`
+        const templateDir = path.join(
+          context.globalStorageUri.fsPath,
+          'templates'
         );
+
+        let templatePath: string;
+
+        // 根据模板类型决定文件路径
+        if (item.template.type === 'mdc') {
+          // MDC 模板文件 - 直接使用模板名称作为文件名
+          const fileName = `${item.template.name}.mdc`;
+          templatePath = path.join(templateDir, fileName);
+        } else {
+          // JSON 模板文件
+          templatePath = path.join(
+            templateDir,
+            `${item.template.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.json`
+          );
+        }
 
         // 检查文件是否存在
         if (!fs.existsSync(templatePath)) {
@@ -79,7 +101,8 @@ export function registerEnhancedTemplateCommands(
         const document = await vscode.workspace.openTextDocument(templatePath);
         await vscode.window.showTextDocument(document);
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : '未知错误';
+        const errorMessage =
+          error instanceof Error ? error.message : '未知错误';
         vscode.window.showErrorMessage(`编辑模板失败: ${errorMessage}`);
       }
     }
@@ -101,7 +124,7 @@ export function registerEnhancedTemplateCommands(
           }
 
           const selected = await vscode.window.showQuickPick(
-            templates.map((t) => ({
+            templates.map(t => ({
               label: t.name,
               description: t.description,
               template: t,
@@ -131,32 +154,41 @@ export function registerEnhancedTemplateCommands(
 
         // 选择保存位置
         const uri = await vscode.window.showSaveDialog({
-          defaultUri: vscode.Uri.file(`${template.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.json`),
+          defaultUri: vscode.Uri.file(
+            `${template.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.json`
+          ),
           filters: {
             'JSON 文件': ['json'],
-            '所有文件': ['*']
+            所有文件: ['*'],
           },
           title: '导出模板',
-          saveLabel: '导出'
+          saveLabel: '导出',
         });
 
         if (uri) {
           // 写入文件
           await fs.promises.writeFile(
             uri.fsPath,
-            JSON.stringify({
-              name: template.name,
-              description: template.description,
-              content: template.content,
-              version: '1.0.0'
-            }, null, 2),
+            JSON.stringify(
+              {
+                name: template.name,
+                description: template.description,
+                content: template.content,
+                version: '1.0.0',
+              },
+              null,
+              2
+            ),
             'utf-8'
           );
 
-          vscode.window.showInformationMessage(`模板 "${template.name}" 已成功导出`);
+          vscode.window.showInformationMessage(
+            `模板 "${template.name}" 已成功导出`
+          );
         }
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : '未知错误';
+        const errorMessage =
+          error instanceof Error ? error.message : '未知错误';
         vscode.window.showErrorMessage(`导出模板失败: ${errorMessage}`);
       }
     }
@@ -172,10 +204,10 @@ export function registerEnhancedTemplateCommands(
           canSelectMany: false,
           filters: {
             'JSON 文件': ['json'],
-            '所有文件': ['*']
+            所有文件: ['*'],
           },
           title: '导入模板',
-          openLabel: '导入'
+          openLabel: '导入',
         });
 
         if (!uris || uris.length === 0) {
@@ -187,7 +219,11 @@ export function registerEnhancedTemplateCommands(
         const templateData = JSON.parse(content);
 
         // 验证模板格式
-        if (!templateData.name || !templateData.description || !templateData.content) {
+        if (
+          !templateData.name ||
+          !templateData.description ||
+          !templateData.content
+        ) {
           vscode.window.showErrorMessage('无效的模板文件格式');
           return;
         }
@@ -196,13 +232,17 @@ export function registerEnhancedTemplateCommands(
         const template: Template = {
           name: templateData.name,
           description: templateData.description,
-          content: typeof templateData.content === 'string' 
-            ? templateData.content 
-            : JSON.stringify(templateData.content)
+          content:
+            typeof templateData.content === 'string'
+              ? templateData.content
+              : JSON.stringify(templateData.content),
         };
 
         // 保存模板到用户目录
-        const templateDir = path.join(context.globalStorageUri.fsPath, 'templates');
+        const templateDir = path.join(
+          context.globalStorageUri.fsPath,
+          'templates'
+        );
         if (!fs.existsSync(templateDir)) {
           fs.mkdirSync(templateDir, { recursive: true });
         }
@@ -235,9 +275,12 @@ export function registerEnhancedTemplateCommands(
         // 刷新模板视图
         treeProvider.refresh();
 
-        vscode.window.showInformationMessage(`模板 "${template.name}" 已成功导入`);
+        vscode.window.showInformationMessage(
+          `模板 "${template.name}" 已成功导入`
+        );
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : '未知错误';
+        const errorMessage =
+          error instanceof Error ? error.message : '未知错误';
         vscode.window.showErrorMessage(`导入模板失败: ${errorMessage}`);
       }
     }
@@ -256,12 +299,27 @@ export function registerEnhancedTemplateCommands(
     }
   );
 
+  // 删除模板命令
+  const deleteTemplateDisposable = vscode.commands.registerCommand(
+    'cursor-rules.deleteTemplate',
+    async (item: TemplateTreeItem) => {
+      if (!item || !item.template) {
+        vscode.window.showErrorMessage('请在模板上右键选择此命令');
+        return;
+      }
+
+      await treeProvider.deleteTemplate(item);
+    }
+  );
+
   // 管理模板命令
   const manageTemplatesDisposable = vscode.commands.registerCommand(
     'cursor-rules.manageTemplates',
     async () => {
       // 打开模板视图
-      await vscode.commands.executeCommand('workbench.view.extension.cursor-rules-explorer');
+      await vscode.commands.executeCommand(
+        'workbench.view.extension.cursor-rules-explorer'
+      );
     }
   );
 
@@ -272,6 +330,7 @@ export function registerEnhancedTemplateCommands(
     exportTemplateDisposable,
     importTemplateDisposable,
     toggleFavoriteDisposable,
+    deleteTemplateDisposable,
     manageTemplatesDisposable
   );
-} 
+}

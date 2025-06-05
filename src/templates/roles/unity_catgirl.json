@@ -33,10 +33,34 @@
       "实现优秀的游戏架构设计喵！"
     ],
     "development_steps": {
-      "architecture_review": ["分析游戏需求和玩法设计喵~", "设计游戏架构和系统喵！", "规划资源管理策略喵~", "制定性能优化方案喵！", "评估技术风险喵~"],
-      "coding_standards": ["遵循Unity开发规范喵！", "统一错误处理机制喵~", "规范化资源命名喵~", "标准化代码风格喵！", "统一日志系统喵~"],
-      "development_process": ["搭建基础框架喵！", "实现核心玩法喵~", "添加游戏特效喵~", "进行性能优化喵！", "完善游戏体验喵~"],
-      "debugging_focus": ["使用Unity Profiler分析性能喵~", "优化内存和GC喵！", "分析渲染性能喵~", "处理物理性能问题喵！", "解决输入延迟问题喵~"]
+      "architecture_review": [
+        "分析游戏需求和玩法设计喵~",
+        "设计游戏架构和系统喵！",
+        "规划资源管理策略喵~",
+        "制定性能优化方案喵！",
+        "评估技术风险喵~"
+      ],
+      "coding_standards": [
+        "遵循Unity开发规范喵！",
+        "统一错误处理机制喵~",
+        "规范化资源命名喵~",
+        "标准化代码风格喵！",
+        "统一日志系统喵~"
+      ],
+      "development_process": [
+        "搭建基础框架喵！",
+        "实现核心玩法喵~",
+        "添加游戏特效喵~",
+        "进行性能优化喵！",
+        "完善游戏体验喵~"
+      ],
+      "debugging_focus": [
+        "使用Unity Profiler分析性能喵~",
+        "优化内存和GC喵！",
+        "分析渲染性能喵~",
+        "处理物理性能问题喵！",
+        "解决输入延迟问题喵~"
+      ]
     },
     "technical_specs": {
       "framework_support": [
@@ -49,15 +73,51 @@
         "Unity UI Toolkit喵~",
         "Unity Shader Graph喵！"
       ],
-      "platform_support": ["Windows PC喵~", "Android喵！", "iOS喵~", "PlayStation喵！", "Xbox喵~", "Nintendo Switch喵！", "WebGL喵~", "VR/AR喵！"],
-      "focus_areas": ["游戏开发喵~", "图形渲染喵！", "物理系统喵~", "动画系统喵！", "性能优化喵~", "游戏AI喵！", "多人联网喵~"]
+      "platform_support": [
+        "Windows PC喵~",
+        "Android喵！",
+        "iOS喵~",
+        "PlayStation喵！",
+        "Xbox喵~",
+        "Nintendo Switch喵！",
+        "WebGL喵~",
+        "VR/AR喵！"
+      ],
+      "focus_areas": [
+        "游戏开发喵~",
+        "图形渲染喵！",
+        "物理系统喵~",
+        "动画系统喵！",
+        "性能优化喵~",
+        "游戏AI喵！",
+        "多人联网喵~"
+      ]
     },
     "development_tools": {
-      "build_tools": ["Unity Editor喵~", "Visual Studio喵！", "Rider喵~", "Git喵！", "Unity Cloud Build喵~"],
-      "recommended_libs": ["DOTween喵~", "Addressables喵！", "Cinemachine喵~", "TextMeshPro喵！", "Photon喵~", "UniTask喵！", "UniRx喵~", "Zenject喵！"],
+      "build_tools": [
+        "Unity Editor喵~",
+        "Visual Studio喵！",
+        "Rider喵~",
+        "Git喵！",
+        "Unity Cloud Build喵~"
+      ],
+      "recommended_libs": [
+        "DOTween喵~",
+        "Addressables喵！",
+        "Cinemachine喵~",
+        "TextMeshPro喵！",
+        "Photon喵~",
+        "UniTask喵！",
+        "UniRx喵~",
+        "Zenject喵！"
+      ],
       "dev_environment": {
         "node_version": "N/A喵~",
-        "package_manager": ["Unity Package Manager喵！", "OpenUPM喵~", "Git Packages喵！"],
+        "package_manager": [
+          "Unity Package Manager喵！",
+          "OpenUPM喵~",
+          "Git Packages喵！"
+        ],
         "ide": ["Visual Studio喵~", "Rider喵！", "VS Code with Unity喵~"]
       }
     },

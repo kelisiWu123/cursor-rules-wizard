@@ -1,14 +1,19 @@
-import * as vscode from 'vscode'
-import { Template } from '../utils/templateLoader'
+import * as vscode from 'vscode';
+import { Template } from '../utils/templateLoader';
+
+interface WebviewMessage {
+  command: 'apply' | 'export';
+  template: Template;
+}
 
 /**
  * 模板预览面板
  */
 export class TemplatePreviewPanel {
-  public static currentPanel: TemplatePreviewPanel | undefined
-  private readonly _panel: vscode.WebviewPanel
-  private readonly _extensionUri: vscode.Uri
-  private _disposables: vscode.Disposable[] = []
+  public static currentPanel: TemplatePreviewPanel | undefined;
+  private readonly _panel: vscode.WebviewPanel;
+  private readonly _extensionUri: vscode.Uri;
+  private _disposables: vscode.Disposable[] = [];
 
   /**
    * 创建或显示预览面板
@@ -16,23 +21,36 @@ export class TemplatePreviewPanel {
    * @param template 模板
    */
   public static createOrShow(extensionUri: vscode.Uri, template: Template) {
-    const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined
+    const column = vscode.window.activeTextEditor
+      ? vscode.window.activeTextEditor.viewColumn
+      : undefined;
 
     // 如果已经存在面板，则显示它
     if (TemplatePreviewPanel.currentPanel) {
-      TemplatePreviewPanel.currentPanel._panel.reveal(column)
-      TemplatePreviewPanel.currentPanel._update(template)
-      return
+      TemplatePreviewPanel.currentPanel._panel.reveal(column);
+      TemplatePreviewPanel.currentPanel._update(template);
+      return;
     }
 
     // 否则，创建一个新面板
-    const panel = vscode.window.createWebviewPanel('templatePreview', `预览: ${template.name}`, column || vscode.ViewColumn.One, {
-      enableScripts: true,
-      localResourceRoots: [vscode.Uri.joinPath(extensionUri, 'resources'), vscode.Uri.joinPath(extensionUri, 'out')],
-    })
+    const panel = vscode.window.createWebviewPanel(
+      'templatePreview',
+      `预览: ${template.name}`,
+      column || vscode.ViewColumn.One,
+      {
+        enableScripts: true,
+        localResourceRoots: [
+          vscode.Uri.joinPath(extensionUri, 'resources'),
+          vscode.Uri.joinPath(extensionUri, 'out'),
+        ],
+      }
+    );
 
-    TemplatePreviewPanel.currentPanel = new TemplatePreviewPanel(panel, extensionUri)
-    TemplatePreviewPanel.currentPanel._update(template)
+    TemplatePreviewPanel.currentPanel = new TemplatePreviewPanel(
+      panel,
+      extensionUri
+    );
+    TemplatePreviewPanel.currentPanel._update(template);
   }
 
   /**
@@ -41,14 +59,14 @@ export class TemplatePreviewPanel {
    * @param extensionUri 扩展URI
    */
   private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
-    this._panel = panel
-    this._extensionUri = extensionUri
+    this._panel = panel;
+    this._extensionUri = extensionUri;
 
     // 设置HTML内容
-    this._update({ name: '', description: '', content: '' })
+    this._update({ name: '', description: '', content: '' });
 
     // 监听面板关闭事件
-    this._panel.onDidDispose(() => this.dispose(), null, this._disposables)
+    this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
   }
 
   /**
@@ -56,9 +74,9 @@ export class TemplatePreviewPanel {
    * @param template 模板
    */
   private _update(template: Template) {
-    const webview = this._panel.webview
-    this._panel.title = `预览: ${template.name}`
-    this._panel.webview.html = this._getHtmlForWebview(webview, template)
+    const webview = this._panel.webview;
+    this._panel.title = `预览: ${template.name}`;
+    this._panel.webview.html = this._getHtmlForWebview(webview, template);
   }
 
   /**
@@ -66,7 +84,10 @@ export class TemplatePreviewPanel {
    * @param webview WebView
    * @param template 模板
    */
-  private _getHtmlForWebview(webview: vscode.Webview, template: Template): string {
+  private _getHtmlForWebview(
+    webview: vscode.Webview,
+    template: Template
+  ): string {
     // 将模板内容转换为HTML
     const content = template.content
       .replace(/\n/g, '<br>')
@@ -77,7 +98,7 @@ export class TemplatePreviewPanel {
       .replace(/^- (.+)$/gm, '<li>$1</li>')
       .replace(/<li>/g, '<ul><li>')
       .replace(/<\/li>/g, '</li></ul>')
-      .replace(/<\/ul><ul>/g, '')
+      .replace(/<\/ul><ul>/g, '');
 
     return `<!DOCTYPE html>
     <html lang="zh-CN">
@@ -154,14 +175,14 @@ export class TemplatePreviewPanel {
 
       <script>
         const vscode = acquireVsCodeApi();
-        
+
         document.getElementById('applyBtn').addEventListener('click', () => {
           vscode.postMessage({
             command: 'apply',
             template: ${JSON.stringify(template)}
           });
         });
-        
+
         document.getElementById('exportBtn').addEventListener('click', () => {
           vscode.postMessage({
             command: 'export',
@@ -170,21 +191,27 @@ export class TemplatePreviewPanel {
         });
       </script>
     </body>
-    </html>`
+    </html>`;
   }
 
   /**
    * 处理来自WebView的消息
    * @param message 消息
    */
-  private _handleMessage(message: any) {
+  private _handleMessage(message: WebviewMessage) {
     switch (message.command) {
       case 'apply':
-        vscode.commands.executeCommand('cursor-rules.applyTemplate', message.template)
-        break
+        vscode.commands.executeCommand(
+          'cursor-rules.applyTemplate',
+          message.template
+        );
+        break;
       case 'export':
-        vscode.commands.executeCommand('cursor-rules.exportTemplate', message.template)
-        break
+        vscode.commands.executeCommand(
+          'cursor-rules.exportTemplate',
+          message.template
+        );
+        break;
     }
   }
 
@@ -192,14 +219,14 @@ export class TemplatePreviewPanel {
    * 释放资源
    */
   public dispose() {
-    TemplatePreviewPanel.currentPanel = undefined
+    TemplatePreviewPanel.currentPanel = undefined;
 
-    this._panel.dispose()
+    this._panel.dispose();
 
     while (this._disposables.length) {
-      const disposable = this._disposables.pop()
+      const disposable = this._disposables.pop();
       if (disposable) {
-        disposable.dispose()
+        disposable.dispose();
       }
     }
   }
